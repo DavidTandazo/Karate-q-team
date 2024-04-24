@@ -112,20 +112,67 @@ Scenario: Caso7 -Actulizar Usuario
       When method get
       Then status 200
 
-    Scenario:  caso 13 - Crear un  post con docString en variable
 
+    Scenario:  caso 13 - Crear un  post con docString en variable
       * def body =
       """
       {
-      'userId' : 1
-      'title' : '',
-      'body ' : ''
+      'userId' : 1,
+      'title' : 'Post de prueba',
+      'body'  : 'Body de prueba'
       }
       """
-      Given url : "https://jsonplaceholder.typicode.com"
+      Given url  "https://jsonplaceholder.typicode.com"
       And path "/posts"
+      And request body
       When method post
-      Then status 200
+      Then status 201
+      * print response
+      And match response.title == "Post de prueba"
+      And match response.body == "Body de prueba"
+      And match response.userId == 1
+
+  Scenario:  caso 14 - Crear un  post con docString en variable
+    * def body =
+      """
+      {
+      'userId' : 1,
+      'title' : 'Post de prueba',
+      'body'  : 'Body de prueba'
+      }
+      """
+    Given url  "https://jsonplaceholder.typicode.com"
+    And path "/posts"
+    And request body
+    When method post
+    Then status 201
+    * print response
+    And match response ==
+   """
+  {
+      'id' :     #number,
+      'userId' : #number,
+      'title' :  #string,
+      'body'  :  #string,
+        }
+
+   """
+Scenario: Caso15- crear un post con JSON en variable
+  * def body =
+      """
+      {
+      'userId' : 1,
+      'title' : 'Post de prueba',
+      'body'  : 'Body de prueba'
+      }
+      """
+  Given url  "https://jsonplaceholder.typicode.com"
+  And path "/posts"
+  And request body
+  When method post
+  Then status 201
+  * print response
+  And match response == read('estructura-response.json')
 
 
       Scenario Outline: Caso 16 - Crear un post con Csv
@@ -136,7 +183,7 @@ Scenario: Caso7 -Actulizar Usuario
         When method post
         Then status 201
         * print response
-        #And match response == read('estructura-response.json)
+        #And match response == read('estructura-response.json')
 
         Examples:
         |read('data.csv')|
